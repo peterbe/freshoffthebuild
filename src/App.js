@@ -162,50 +162,76 @@ class App extends Component {
             )}
             <hr />
             <form action=".">
-              <div className="field">
-                <label className="label">Source</label>
-                <div className="control">
-                  <input
-                    className="input"
-                    type="url"
-                    name="s"
-                    defaultValue={this.state.source}
-                    placeholder={`Source URL e.g. ${DEFAULT_SOURCE}`}
-                  />
+              <div className="field is-horizontal">
+                <div className="field-label is-normal">
+                  <label className="label">Source</label>
+                </div>
+                <div className="field-body">
+                  <div className="field">
+                    <div className="control">
+                      <input
+                        className="input"
+                        type="url"
+                        name="s"
+                        defaultValue={this.state.source}
+                        placeholder={`Source URL e.g. ${DEFAULT_SOURCE}`}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="field has-addons">
-                <label className="label">Update Frequency</label>
-
-                <div className="control">
-                  <input
-                    className="input"
-                    type="number"
-                    name="f"
-                    defaultValue={this.state.frequency}
-                    placeholder={`Number of seconds between checks. E.g. ${DEFAULT_FREQUENCY}`}
-                  />{" "}
+              <div className="field is-horizontal">
+                <div className="field-label is-normal">
+                  <label className="label">Update Frequency</label>
                 </div>
-                <p className="control">
-                  <span className="select">
-                    <select name="u" defaultValue={this.state.frequencyUnit}>
-                      <option>seconds</option>
-                      <option>minutes</option>
-                      <option>hours</option>
-                    </select>
-                  </span>
-                </p>
+
+                <div className="field-body">
+                  <div className="field">
+                    <div className="field has-addons">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="number"
+                          name="f"
+                          defaultValue={this.state.frequency}
+                          placeholder={`Number of seconds between checks. E.g. ${DEFAULT_FREQUENCY}`}
+                        />{" "}
+                      </div>
+                      <p className="control">
+                        <span className="select">
+                          <select
+                            name="u"
+                            defaultValue={this.state.frequencyUnit}
+                          >
+                            <option>seconds</option>
+                            <option>minutes</option>
+                            <option>hours</option>
+                          </select>
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="control">
-                <button className="button is-primary">Change Options</button>
+              <div className="field is-horizontal">
+                <div className="field-label">
+                  {/* Left empty for spacing  */}
+                </div>
+                <div className="field-body">
+                  <div className="control">
+                    <button className="button is-primary">
+                      Change Options
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
         </section>
         <footer className="footer">
-          <div className="content has-text-centered">
-            <p>No footer available yet</p>
+          <div className="content has-text-centered is-small">
+            <DisplayVersion />
           </div>
         </footer>
       </div>
@@ -215,8 +241,34 @@ class App extends Component {
 
 export default App;
 
+const DisplayVersion = React.memo(() => {
+  const element = document.querySelector("#_version");
+  const data = Object.assign({}, element.dataset);
+  return (
+    <p className="version-info">
+      <a
+        href="https://github.com/peterbe/chiveproxy"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        FreshOffTheBuild
+      </a>
+      <br />
+      Version{" "}
+      <a
+        href={`https://github.com/peterbe/freshoffthebuild/commit/${
+          data.commit
+        }`}
+        title={data.date}
+      >
+        {data.commit.slice(0, 7)}
+      </a>{" "}
+      {data.date}
+    </p>
+  );
+});
+
 function ShowServerError({ error }) {
-  console.log("ERROR?", error instanceof window.Response);
   const isResponseError = error instanceof window.Response;
   return (
     <article className="message is-danger">
@@ -246,47 +298,6 @@ function ShowLookups({ lookups }) {
   );
 }
 
-// class ShowProgressBar extends React.PureComponent {
-//   state = {
-//     secondsLeft: 0,
-//     percentage: 0
-//   };
-
-//   componentDidMount() {
-//     this.loop();
-//   }
-
-//   loop = () => {
-//     const { start, seconds } = this.props;
-//     const finish = start + seconds * 1000;
-//     const total = finish - start;
-//     const now = new Date().getTime();
-//     const done = now - start;
-//     const secondsLeft = Math.ceil((total - done) / 1000);
-//     const percentage = Math.ceil((100 * done) / total);
-//     this.setState({ secondsLeft, percentage });
-//     window.setTimeout(this.loop, 1000);
-//   };
-
-//   render() {
-//     const max = 100;
-//     const { secondsLeft, percentage } = this.state;
-//     return (
-//       <div>
-//         <progress
-//           className="progress is-small is-info"
-//           value={percentage}
-//           max={max}
-//         >
-//           {percentage}%
-//         </progress>
-//         <small>
-//           Time until next check: <b>{showSecondsHuman(secondsLeft)}</b>
-//         </small>
-//       </div>
-//     );
-//   }
-// }
 class ShowProgressBar extends React.PureComponent {
   state = {
     secondsLeft: 0,
