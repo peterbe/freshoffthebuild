@@ -9,4 +9,4 @@ INLINE_RUNTIME_CHUNK=false yarn run build
 
 ./bin/insert_version.js build/version.json build/index.html
 
-# gh-pages --add --dist build/
+gh-pages --add --dist build/
