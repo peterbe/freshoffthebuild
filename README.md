@@ -1,44 +1,24 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Fresh Off The Build
 
-## Available Scripts
+A client-side app that keeps checking what's new in Buildhub as a
+way to find out, in near real-time, what's recently been built in
+Mozilla TaskCluster.
 
-In the project directory, you can run:
 
-### `npm start`
+## Licence
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+[MPL 2.0](http://www.mozilla.org/MPL/2.0/)
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## To Dev
 
-### `npm test`
+Fire up...
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    git clone ...
+    yarn
+    BROWSER=none yarn start
 
-### `npm run build`
+## To Deploy
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+If you have access to push to `origin` simply run:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+    ./bin/deploy.sh
