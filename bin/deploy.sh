@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-INLINE_RUNTIME_CHUNK=false yarn run build
+
+INLINE_RUNTIME_CHUNK=false \
+PUBLIC_URL=/freshoffthebuild \
+yarn run build
 
 # ./bin/insert_csp.js build/index.html
 
