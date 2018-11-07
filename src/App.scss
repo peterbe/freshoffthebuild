@@ -1,0 +1,76 @@
+// This doesn't work in Firefox because of this sad bug https://bugzilla.mozilla.org/show_bug.cgi?id=662351
+progress {
+  transition: width 0.5s ease;
+}
+
+progress::-webkit-progress-value {
+  transition: width 0.5s ease;
+}
+
+nav.level.before {
+  opacity: 0.7;
+}
+nav.level.initial {
+  opacity: 0.4;
+}
+
+
+#progress {
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: -6px;
+	width: 1%;
+	height: 3px;
+  background-color: #290000;
+
+  -moz-border-radius: 1px;
+	-webkit-border-radius: 1px;
+	border-radius: 1px;
+
+  -moz-transition: width 600ms ease-out,opacity 500ms linear;
+	-ms-transition: width 600ms ease-out,opacity 500ms linear;
+	-o-transition: width 600ms ease-out,opacity 500ms linear;
+	-webkit-transition: width 600ms ease-out,opacity 500ms linear;
+	transition: width 1000ms ease-out,opacity 500ms linear;
+
+  b, i {
+    position: absolute;
+    top: 0;
+    height: 3px;
+
+    -moz-box-shadow: #777777 1px 0 6px 1px;
+    -ms-box-shadow: #777777 1px 0 6px 1px;
+    -webkit-box-shadow: #777777 1px 0 6px 1px;
+    box-shadow: #777777 1px 0 6px 1px;
+
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+  }
+
+  b {
+    clip: rect(-6px, 22px, 14px, 10px);
+    opacity: .6;
+    width: 20px;
+    right: 0;
+  }
+
+  i {
+    clip: rect(-6px, 90px, 14px, -6px);
+  	opacity: .6;
+    width: 180px;
+    right: -80px;
+  }
+}
+
+
+.header {
+  text-align: center;
+  border-bottom: 1px solid #dfdfdf;
+  padding-bottom: 20px;
+}
+
+.footer {
+  background-color: unset;
+}
