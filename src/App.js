@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ky from "ky";
 import nanoEqual from "nano-equal";
+import TimeAgo from "react-timeago";
 import "./App.scss";
 
 const DEFAULT_SOURCE =
@@ -27,6 +28,14 @@ const defaultFrequency = parseInt(
 );
 const defaultFrequencyUnit = searchParams.get("u") || DEFAULT_FREQUENCY_UNIT;
 
+function getLastResultFromLocalStorage() {
+  const lastresult = window.localStorage.getItem("lastresult");
+  if (lastresult) {
+    return JSON.parse(lastresult);
+  }
+  return null;
+}
+
 class App extends Component {
   state = {
     source: defaultSource,
@@ -34,6 +43,7 @@ class App extends Component {
     frequencyUnit: defaultFrequencyUnit,
     loading: true,
     result: null,
+    lastResult: getLastResultFromLocalStorage(),
     lookups: 0,
     serverError: null
   };
@@ -93,11 +103,22 @@ class App extends Component {
       const response = await ky.post(url.href, { json: search });
       if (response.ok) {
         const json = await response.json();
-        this.setState({
-          result: json,
-          lookups: this.state.lookups + 1,
-          serverError: null
-        });
+        this.setState(
+          {
+            result: json,
+            lookups: this.state.lookups + 1,
+            serverError: null
+          },
+          () => {
+            window.localStorage.setItem(
+              "lastresult",
+              JSON.stringify({
+                result: this.state.result,
+                timestamp: new Date().getTime()
+              })
+            );
+          }
+        );
       } else {
         this.setState({
           serverError: response,
@@ -131,7 +152,10 @@ class App extends Component {
             )}
 
             {this.state.result && (
-              <ShowAggregates aggregates={this.state.result.aggregations} />
+              <ShowAggregates
+                aggregates={this.state.result.aggregations}
+                lastResult={this.state.lastResult}
+              />
             )}
 
             {this.state.start && (
@@ -362,7 +386,7 @@ class ShowAggregates extends React.PureComponent {
     }
   }
   render() {
-    const { aggregates } = this.props;
+    const { aggregates, lastResult } = this.props;
     function packageProducts(aggs) {
       return aggs.products["source.product"].buckets.map(bucket => {
         return { name: bucket.key, count: bucket.doc_count };
@@ -388,6 +412,19 @@ class ShowAggregates extends React.PureComponent {
       }
     }
 
+    let lastProducts = null;
+    let lastResultTime = null;
+    if (this.props.lastResult) {
+      if (
+        !nanoEqual(aggregates, lastResult.result.aggregations) &&
+        !nanoEqual(this.state.previous, lastResult.result.aggregations) &&
+        !nanoEqual(this.state.initial, lastResult.result.aggregations)
+      ) {
+        lastResultTime = lastResult.timestamp;
+        lastProducts = packageProducts(lastResult.result.aggregations);
+      }
+    }
+
     return (
       <div style={{ margin: `${topMargin}px 20px` }}>
         {previousProducts && <p>Current:</p>}
@@ -399,6 +436,14 @@ class ShowAggregates extends React.PureComponent {
         {initialProducts && <p>Initial:</p>}
         {initialProducts && (
           <ShowProducts products={initialProducts} extraClassname="initial" />
+        )}
+        {lastResultTime && (
+          <p>
+            Last time you visited (<TimeAgo date={lastResultTime} />)
+          </p>
+        )}
+        {lastProducts && (
+          <ShowProducts products={lastProducts} extraClassname="last" />
         )}
       </div>
     );
