@@ -14,7 +14,10 @@ const DEFAULT_FREQUENCY_UNIT =
   process.env.REACT_APP_DEFAULT_FREQUENCY_UNIT || "minutes";
 
 const searchParams = new URLSearchParams(window.location.search);
-const defaultSource = searchParams.get("s") || DEFAULT_SOURCE;
+let defaultSource = searchParams.get("s") || DEFAULT_SOURCE;
+if (!defaultSource.startsWith("http")) {
+  defaultSource = `https://${defaultSource}`;
+}
 try {
   new URL(defaultSource);
 } catch (ex) {
@@ -28,12 +31,35 @@ const defaultFrequency = parseInt(
 );
 const defaultFrequencyUnit = searchParams.get("u") || DEFAULT_FREQUENCY_UNIT;
 
-function getLastResultFromLocalStorage() {
-  const lastresult = window.localStorage.getItem("lastresult");
+function getLastResultFromLocalStorage(source) {
+  const cacheKey = `lastresult-${source}`;
+  const lastresult = window.localStorage.getItem(cacheKey);
   if (lastresult) {
     return JSON.parse(lastresult);
   }
   return null;
+}
+
+function setLastResult(result, source) {
+  const cacheKey = `lastresult-${source}`;
+  window.localStorage.setItem(
+    cacheKey,
+    JSON.stringify({
+      result,
+      timestamp: new Date().getTime()
+    })
+  );
+}
+
+// Legacy fix. We used to store it in localStorage key called "lastresult".
+// Let's clean that up.
+if (window.localStorage.getItem("lastresult")) {
+  const results = getLastResultFromLocalStorage(defaultSource);
+  if (!results) {
+    const oldResults = JSON.parse(window.localStorage.getItem("lastresult"));
+    setLastResult(oldResults, defaultSource);
+  }
+  window.localStorage.removeItem("lastresult");
 }
 
 class App extends Component {
@@ -43,7 +69,7 @@ class App extends Component {
     frequencyUnit: defaultFrequencyUnit,
     loading: true,
     result: null,
-    lastResult: getLastResultFromLocalStorage(),
+    lastResult: getLastResultFromLocalStorage(defaultSource),
     lookups: 0,
     serverError: null
   };
@@ -74,7 +100,13 @@ class App extends Component {
   };
 
   fetch = async () => {
-    const url = new URL("/api/search", this.state.source);
+    // Only if the "source" is just a domain, then add "/api/search".
+    // The smarts about doing this is that the user can enter
+    // 'http://example.com' or 'http://example.com/'.
+    let url = new URL(this.state.source);
+    if (!url.pathname || url.pathname === "/") {
+      url = new URL("/api/search", this.state.source);
+    }
 
     const search = {
       aggs: {
@@ -110,13 +142,7 @@ class App extends Component {
             serverError: null
           },
           () => {
-            window.localStorage.setItem(
-              "lastresult",
-              JSON.stringify({
-                result: this.state.result,
-                timestamp: new Date().getTime()
-              })
-            );
+            setLastResult(this.state.result, this.state.source);
           }
         );
       } else {
@@ -271,7 +297,7 @@ const DisplayVersion = React.memo(() => {
   return (
     <p className="version-info">
       <a
-        href="https://github.com/peterbe/chiveproxy"
+        href="https://github.com/peterbe/freshoffthebuild"
         target="_blank"
         rel="noopener noreferrer"
       >
