@@ -54,11 +54,6 @@ function setLastResult(result, source) {
 // Legacy fix. We used to store it in localStorage key called "lastresult".
 // Let's clean that up.
 if (window.localStorage.getItem("lastresult")) {
-  const results = getLastResultFromLocalStorage(defaultSource);
-  if (!results) {
-    const oldResults = JSON.parse(window.localStorage.getItem("lastresult"));
-    setLastResult(oldResults, defaultSource);
-  }
   window.localStorage.removeItem("lastresult");
 }
 
