@@ -5,7 +5,7 @@ import TimeAgo from "react-timeago";
 import "./App.scss";
 
 const DEFAULT_SOURCE =
-  process.env.REACT_APP_DEFAULT_SOURCE || "https://buildhub2.stage.mozaws.net/";
+  process.env.REACT_APP_DEFAULT_SOURCE || "https://buildhub.moz.tools/";
 const DEFAULT_FREQUENCY = parseInt(
   process.env.REACT_APP_DEFAULT_FREQUENCY || 10,
   10
